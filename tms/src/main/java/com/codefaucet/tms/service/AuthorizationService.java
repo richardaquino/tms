@@ -77,6 +77,7 @@ public class AuthorizationService implements IAuthorizationService {
 			var token = UUID.randomUUID().toString();
 			var expiration = LocalDateTime.now().plusMinutes(sessionLifespan);
 			session = new Session(token, expiration);
+			session.setUserId(user.getId());
 			session = sessionRepository.create(session);
 		}
 

@@ -27,6 +27,10 @@ public class User {
 		this(0L, true, role, username, password, lastName, firstName, middleName);
 	}
 
+	public User() {
+		this(UserRole.UNKNOWN, "", "", "", "", "");
+	}
+
 	public long getId() {
 		return id;
 	}

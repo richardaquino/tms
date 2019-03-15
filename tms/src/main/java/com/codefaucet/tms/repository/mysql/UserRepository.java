@@ -1,5 +1,6 @@
 package com.codefaucet.tms.repository.mysql;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +21,9 @@ public class UserRepository implements IUserRepository {
 	@Override
 	public User findByUsername(String username) {
 		var user = userRepository.findByUsername(username);
+		if (user == null) {
+			return null;
+		}
 		return new User(user.getId(), user.isActive(), user.getRole(), user.getUsername(), user.getPassword(),
 				user.getLastName(), user.getFirstName(), user.getMiddleName());
 	}
@@ -68,7 +72,14 @@ public class UserRepository implements IUserRepository {
 	@Override
 	public List<User> find(String queryString, UserRole role, boolean includeInactive, int pageNumber, int pageSize) {
 		var pageable = PageRequest.of(pageNumber - 1, pageSize);
-		var users = userRepository.find(queryString, role, includeInactive, pageable);
+		var roles = new ArrayList<UserRole>();
+		if (role == UserRole.UNKNOWN) {
+			roles.add(UserRole.ADMIN);
+			roles.add(UserRole.ENCODER);
+		} else {
+			roles.add(role);
+		}
+		var users = userRepository.find(queryString, roles, includeInactive, pageable);
 		return users.stream().map(item -> new User(item.getId(), item.isActive(), item.getRole(), item.getUsername(),
 				"", item.getLastName(), item.getFirstName(), item.getMiddleName())).collect(Collectors.toList());
 	}

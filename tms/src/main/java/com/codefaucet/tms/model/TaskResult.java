@@ -1,5 +1,6 @@
 package com.codefaucet.tms.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class TaskResult<T> {
@@ -11,6 +12,7 @@ public class TaskResult<T> {
 
 	public TaskResult() {
 		status = TaskStatus.UNKNOWN;
+		errors = new HashMap<String, String>();
 	}
 
 	public TaskResult<T> setSuccessful(T content) {

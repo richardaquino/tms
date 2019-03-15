@@ -18,7 +18,7 @@ public interface IMySQLUserRepository extends JpaRepository<User, Long> {
 	@Query(
 		"select u from User u "
 		+ "where "
-		+ "(:role = 'UNKNOWN' or u.role = :role) "
+		+ "u.role in :roles "
 		+ "and (:includeInactive = true or u.active = true) "
 		+ "and ("
 		+ "u.lastName like concat(:queryString, '%') "
@@ -28,7 +28,7 @@ public interface IMySQLUserRepository extends JpaRepository<User, Long> {
 		+ ")")
 	List<User> find(
 		@Param("queryString") String queryString, 
-		@Param("role") UserRole role,
+		@Param("roles") List<UserRole> roles,
 		@Param("includeInactive") boolean includeInactive, 
 		Pageable pageable
 	);

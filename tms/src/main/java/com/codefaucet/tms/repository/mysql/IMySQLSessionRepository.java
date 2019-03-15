@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IMySQLSessionRepository extends JpaRepository<Session, Long> {
 
-	Session findByUserIdOrderByExpirationDesc(int userId);
+	Session findByUserIdOrderByExpirationDesc(long userId);
 
 	Session findByToken(String token);
 
