@@ -2,11 +2,14 @@ package com.codefaucet.tms.model.service;
 
 import java.util.List;
 
+import org.springframework.security.core.userdetails.UserDetailsService;
+
 import com.codefaucet.tms.model.TaskResult;
 import com.codefaucet.tms.model.User;
 import com.codefaucet.tms.model.UserRole;
+import com.codefaucet.tms.security.UserPrincipal;
 
-public interface IUserService {
+public interface IUserService extends UserDetailsService {
 
 	TaskResult<User> create(User user);
 
@@ -23,5 +26,7 @@ public interface IUserService {
 	TaskResult<Boolean> changePassword(String authorizationToken, String currentPassword, String newPassword);
 
 	TaskResult<String> resetPassword(long userId);
+
+	UserPrincipal findUserPrincipalByUserId(long userId);
 
 }

@@ -3,6 +3,8 @@ package com.codefaucet.tms.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.codefaucet.tms.model.TaskResult;
@@ -12,6 +14,7 @@ import com.codefaucet.tms.model.repository.ISessionRepository;
 import com.codefaucet.tms.model.repository.IUserRepository;
 import com.codefaucet.tms.model.service.IPasswordService;
 import com.codefaucet.tms.model.service.IUserService;
+import com.codefaucet.tms.security.UserPrincipal;
 import com.codefaucet.tms.service.validator.UserValidator;
 
 @Service
@@ -106,6 +109,24 @@ public class UserService implements IUserService {
 		userRepository.changePassword(userId, hashedPassword);
 
 		return result.setSuccessful(plainPassword);
+	}
+
+	@Override
+	public UserPrincipal findUserPrincipalByUserId(long userId) {
+		var user = userRepository.findById(userId);
+		if (user == null) {
+			return null;
+		}
+		return new UserPrincipal(user);
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		var user = userRepository.findByUsername(username);
+		if (user == null) {
+			throw new UsernameNotFoundException("Username '" + username + "' not found.");
+		}
+		return new UserPrincipal(user);
 	}
 
 }
