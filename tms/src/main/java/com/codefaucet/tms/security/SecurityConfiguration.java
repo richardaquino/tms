@@ -21,9 +21,6 @@ import com.codefaucet.tms.model.service.IUserService;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	private SessionAuthenticationEntryPoint sessionAuthenticationEntryPoint;
-
-	@Autowired
 	private IUserService userService;
 
 	@Bean
@@ -31,14 +28,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return new SessionAuthenticationFilter();
 	}
 
-	@Bean
-	BCryptPasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
 	}
 
 	@Bean
@@ -49,18 +44,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http
-			.cors()
-			.and()
-			.csrf().disable().exceptionHandling().authenticationEntryPoint(sessionAuthenticationEntryPoint)
-			.and()
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-			.and()
-			.authorizeRequests().antMatchers(
-				"/auth/signIn",
-				"/auth/validateSession"
-			)
-			.permitAll().anyRequest().authenticated();
+		http.cors().and().csrf().disable().exceptionHandling().and().sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
+				.antMatchers("/auth/signIn", "/auth/validateSession").permitAll().anyRequest().authenticated();
 		http.addFilterBefore(sessionAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
 

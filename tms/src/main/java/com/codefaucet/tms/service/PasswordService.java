@@ -2,6 +2,8 @@ package com.codefaucet.tms.service;
 
 import java.util.Random;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.codefaucet.tms.model.service.IPasswordService;
@@ -9,14 +11,17 @@ import com.codefaucet.tms.model.service.IPasswordService;
 @Service
 public class PasswordService implements IPasswordService {
 
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
+
 	@Override
 	public boolean matches(String plainPassword, String hashedPassword) {
-		return plainPassword.equals(hashedPassword);
+		return passwordEncoder.matches(plainPassword, hashedPassword);
 	}
 
 	@Override
 	public String hash(String plainText) {
-		return plainText;
+		return passwordEncoder.encode(plainText);
 	}
 
 	@Override
