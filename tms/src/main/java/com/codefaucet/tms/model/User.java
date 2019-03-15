@@ -4,16 +4,18 @@ public class User {
 
 	private long id;
 	private boolean active;
+	private UserRole role;
 	private String username;
 	private String password;
 	private String lastName;
 	private String firstName;
 	private String middleName;
 
-	public User(long id, boolean active, String username, String password, String lastName, String firstName,
-			String middleName) {
+	public User(long id, boolean active, UserRole role, String username, String password, String lastName,
+			String firstName, String middleName) {
 		this.id = id;
 		this.active = active;
+		this.role = role;
 		this.username = username;
 		this.password = password;
 		this.lastName = lastName;
@@ -21,8 +23,8 @@ public class User {
 		this.middleName = middleName;
 	}
 
-	public User(String username, String password, String lastName, String firstName, String middleName) {
-		this(0L, true, username, password, lastName, firstName, middleName);
+	public User(UserRole role, String username, String password, String lastName, String firstName, String middleName) {
+		this(0L, true, role, username, password, lastName, firstName, middleName);
 	}
 
 	public long getId() {
@@ -39,6 +41,14 @@ public class User {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public UserRole getRole() {
+		return role;
+	}
+
+	public void setRole(UserRole role) {
+		this.role = role;
 	}
 
 	public String getUsername() {

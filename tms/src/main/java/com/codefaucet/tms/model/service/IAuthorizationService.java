@@ -7,6 +7,6 @@ public interface IAuthorizationService {
 
 	TaskResult<SignInInfo> signIn(String username, String password);
 
-	SignInInfo validateSession(String token);
+	TaskResult<SignInInfo> validateSession(String token);
 
 }

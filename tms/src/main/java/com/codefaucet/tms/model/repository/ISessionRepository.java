@@ -4,6 +4,12 @@ import com.codefaucet.tms.model.Session;
 
 public interface ISessionRepository {
 
-	Session findByUserOrderByExpirationDesc(long id);
+	Session findLatestByUserId(long userId);
+
+	Session create(Session session);
+
+	Session findByToken(String token);
+
+	Session update(Session session);
 
 }

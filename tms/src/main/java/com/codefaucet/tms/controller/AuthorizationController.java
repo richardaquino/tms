@@ -27,7 +27,7 @@ public class AuthorizationController {
 	}
 	
 	@PostMapping("validateSession")
-	public SignInInfo validateSession(@RequestHeader("Authorization") String authorizationToken)
+	public TaskResult<SignInInfo> validateSession(@RequestHeader("Authorization") String authorizationToken)
 	{
 		return authorizationService.validateSession(authorizationToken);
 	}

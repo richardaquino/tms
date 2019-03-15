@@ -66,6 +66,14 @@ public class Session {
 		this.token = key;
 	}
 
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 	public LocalDateTime getExpiration() {
 		return expiration;
 	}
