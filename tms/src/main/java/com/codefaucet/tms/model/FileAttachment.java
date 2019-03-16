@@ -3,19 +3,17 @@ package com.codefaucet.tms.model;
 public class FileAttachment {
 
 	private long id;
-	private long thesisId;
 	private String originalFilename;
 	private String serverFilename;
 
-	public FileAttachment(long id, long thesisId, String originalFilename, String serverFilename) {
+	public FileAttachment(long id, String originalFilename, String serverFilename) {
 		this.id = id;
-		this.thesisId = thesisId;
 		this.originalFilename = originalFilename;
 		this.serverFilename = serverFilename;
 	}
 
 	public FileAttachment(String originalFilename, String serverFilename) {
-		this(0L, 0L, originalFilename, serverFilename);
+		this(0L, originalFilename, serverFilename);
 	}
 
 	public FileAttachment() {
@@ -28,14 +26,6 @@ public class FileAttachment {
 
 	public void setId(long id) {
 		this.id = id;
-	}
-
-	public long getThesisId() {
-		return thesisId;
-	}
-
-	public void setThesisId(long thesisId) {
-		this.thesisId = thesisId;
 	}
 
 	public String getOriginalFilename() {

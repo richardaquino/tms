@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,7 +35,7 @@ public class User {
 	@Column
 	@Enumerated(EnumType.STRING)
 	private UserRole role;
-	
+
 	@Column(name = "username")
 	@NotNull
 	@Length(max = 32)
@@ -62,8 +63,14 @@ public class User {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Session> sessions;
 
-	public User(long id, boolean active, UserRole role, String username, String password, String lastName, String firstName,
-			String middleName) {
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "encoder")
+	private List<Panelist> encodedPanelists;
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "encoder")
+	private List<Thesis> theses;
+
+	public User(long id, boolean active, UserRole role, String username, String password, String lastName,
+			String firstName, String middleName) {
 		this.id = id;
 		this.active = active;
 		this.role = role;
@@ -73,6 +80,8 @@ public class User {
 		this.firstName = firstName;
 		this.middleName = middleName;
 		sessions = new ArrayList<Session>();
+		encodedPanelists = new ArrayList<Panelist>();
+		theses = new ArrayList<Thesis>();
 	}
 
 	public User(UserRole role, String username, String password, String lastName, String firstName, String middleName) {
@@ -153,6 +162,22 @@ public class User {
 
 	public void setSessions(List<Session> sessions) {
 		this.sessions = sessions;
+	}
+
+	public List<Panelist> getEncodedPanelists() {
+		return encodedPanelists;
+	}
+
+	public void setEncodedPanelists(List<Panelist> encodedPanelists) {
+		this.encodedPanelists = encodedPanelists;
+	}
+
+	public List<Thesis> getTheses() {
+		return theses;
+	}
+
+	public void setTheses(List<Thesis> theses) {
+		this.theses = theses;
 	}
 
 }

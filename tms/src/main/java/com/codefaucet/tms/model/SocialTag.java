@@ -11,7 +11,7 @@ public class SocialTag {
 	}
 
 	public SocialTag() {
-		this("", 1);
+		this("", 0);
 	}
 
 	public String getName() {
