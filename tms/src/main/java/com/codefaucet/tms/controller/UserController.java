@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codefaucet.tms.model.TaskResult;
-import com.codefaucet.tms.model.User;
 import com.codefaucet.tms.model.UserRole;
-import com.codefaucet.tms.model.service.IUserService;
+import com.codefaucet.tms.model.dto.UserDTO;
+import com.codefaucet.tms.model.service_interface.IUserService;
 
 @RestController
 @RequestMapping("/user")
@@ -25,27 +25,27 @@ public class UserController {
 	private IUserService userService;
 	
 	@PostMapping("/create")
-	public TaskResult<User> create(@RequestBody User user) {
+	public TaskResult<UserDTO> create(@RequestBody UserDTO user) {
 		return userService.create(user);
 	}
 	
 	@PostMapping("/update")
-	public TaskResult<User> update(@RequestBody User user) {
+	public TaskResult<UserDTO> update(@RequestBody UserDTO user) {
 		return userService.update(user);
 	}
 	
 	@PostMapping("/delete")
 	public TaskResult<Boolean> delete(@RequestBody long userId) {
-		return userService.setDeleted(userId, true);
+		return userService.setActive(userId, true);
 	}
 	
 	@PostMapping("/restore")
 	public TaskResult<Boolean> restore(@RequestBody long userId) {
-		return userService.setDeleted(userId, false);
+		return userService.setActive(userId, false);
 	}
 	
 	@PostMapping("/find")
-	public List<User> find(@RequestBody Map<String, Object> parameter) {
+	public List<UserDTO> find(@RequestBody Map<String, Object> parameter) {
 		var queryString = (String)parameter.get("queryString");
 		var role = UserRole.valueOf((String)parameter.get("role"));
 		var includeInactive = (boolean)parameter.get("includeInactive");
@@ -55,12 +55,12 @@ public class UserController {
 	}
 	
 	@PostMapping("/findById")
-	public User findById(@RequestBody long userId) {
+	public UserDTO findById(@RequestBody long userId) {
 		return userService.findById(userId);
 	}
 	
 	@PostMapping("/findNew")
-	public User findNew() {
+	public UserDTO findNew() {
 		return userService.findNew();
 	}
 	

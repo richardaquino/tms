@@ -4,7 +4,7 @@ import java.util.Base64;
 
 import org.springframework.stereotype.Service;
 
-import com.codefaucet.tms.model.service.IEncoderService;
+import com.codefaucet.tms.model.service_interface.IEncoderService;
 
 @Service
 public class EncoderService implements IEncoderService {

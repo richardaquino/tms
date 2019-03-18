@@ -6,19 +6,19 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.codefaucet.tms.model.IValidator;
-import com.codefaucet.tms.model.User;
 import com.codefaucet.tms.model.UserRole;
-import com.codefaucet.tms.model.repository.IUserRepository;
+import com.codefaucet.tms.model.dto.UserDTO;
+import com.codefaucet.tms.model.service_interface.validator.IValidator;
+import com.codefaucet.tms.repository.IUserRepository;
 
 @Service
-public class UserValidator implements IValidator<User> {
+public class UserValidator implements IValidator<UserDTO> {
 
 	@Autowired
 	private IUserRepository userRepository;
 
 	@Override
-	public Map<String, String> validate(User model) {
+	public Map<String, String> validate(UserDTO model) {
 		var errors = new HashMap<String, String>();
 
 		if (model.getFirstName() == null || model.getFirstName().isBlank()) {

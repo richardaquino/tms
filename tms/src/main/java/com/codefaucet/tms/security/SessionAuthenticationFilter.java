@@ -15,13 +15,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.codefaucet.tms.model.service.ISessionService;
-import com.codefaucet.tms.model.service.IUserService;
+import com.codefaucet.tms.model.service_interface.IUserService;
+import com.codefaucet.tms.repository.ISessionRepository;
 
 public class SessionAuthenticationFilter extends OncePerRequestFilter {
 
 	@Autowired
-	private ISessionService sessionService;
+	private ISessionRepository sessionRepository;
 
 	@Autowired
 	private IUserService userService;
@@ -39,9 +39,9 @@ public class SessionAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 		authorizationToken = authorizationToken.substring(7, authorizationToken.length());
-		var session = sessionService.findByToken(authorizationToken);
+		var session = sessionRepository.findByToken(authorizationToken);
 		if (session != null) {
-			var userDetails = userService.findUserPrincipalByUserId(session.getUserId());
+			var userDetails = userService.findUserPrincipalByUserId(session.getUser().getId());
 			((UserPrincipal) userDetails).setSessionKey(authorizationToken);
 			var authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
 					userDetails.getAuthorities());
@@ -53,7 +53,7 @@ public class SessionAuthenticationFilter extends OncePerRequestFilter {
 				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "SESSION_EXPIRED");
 			} else {
 				session.setExpiration(timeNow.plusMinutes(sessionLifespan));
-				session = sessionService.update(session);
+				sessionRepository.save(session);
 			}
 		}
 

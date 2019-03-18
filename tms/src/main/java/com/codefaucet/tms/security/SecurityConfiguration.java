@@ -13,7 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.codefaucet.tms.model.service.IUserService;
+import com.codefaucet.tms.model.service_interface.IUserService;
 
 @Configuration
 @EnableWebSecurity

@@ -7,15 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.codefaucet.tms.model.Session;
-import com.codefaucet.tms.model.SignInInfo;
 import com.codefaucet.tms.model.TaskResult;
-import com.codefaucet.tms.model.User;
 import com.codefaucet.tms.model.UserRole;
-import com.codefaucet.tms.model.repository.ISessionRepository;
-import com.codefaucet.tms.model.repository.IUserRepository;
-import com.codefaucet.tms.model.service.IAuthorizationService;
-import com.codefaucet.tms.model.service.IPasswordService;
+import com.codefaucet.tms.model.domain.Session;
+import com.codefaucet.tms.model.domain.User;
+import com.codefaucet.tms.model.dto.SignInInfoDTO;
+import com.codefaucet.tms.model.service_interface.IAuthorizationService;
+import com.codefaucet.tms.model.service_interface.IPasswordService;
+import com.codefaucet.tms.repository.ISessionRepository;
+import com.codefaucet.tms.repository.IUserRepository;
 
 @Service
 public class AuthorizationService implements IAuthorizationService {
@@ -36,8 +36,8 @@ public class AuthorizationService implements IAuthorizationService {
 	private IPasswordService passwordService;
 
 	@Override
-	public TaskResult<SignInInfo> signIn(String username, String password) {
-		var result = new TaskResult<SignInInfo>();
+	public TaskResult<SignInInfoDTO> signIn(String username, String password) {
+		var result = new TaskResult<SignInInfoDTO>();
 
 		if (username == null || username.isBlank()) {
 			result.getErrors().put("username", "Username is required.");
@@ -53,10 +53,10 @@ public class AuthorizationService implements IAuthorizationService {
 		if (user == null) {
 			var returnFailed = true;
 			if (username.equalsIgnoreCase("admin")) {
-				if (!userRepository.usersExists()) {
+				if (userRepository.count() == 0) {
 					user = new User(UserRole.ADMIN, "admin", passwordService.hash(defaultAdminPassword), "admin",
 							"admin", "admin");
-					user = userRepository.create(user);
+					user = userRepository.save(user);
 					returnFailed = false;
 				}
 			}
@@ -72,22 +72,32 @@ public class AuthorizationService implements IAuthorizationService {
 			return result.setFailed("User account inactive.");
 		}
 
-		var session = sessionRepository.findLatestByUserId(user.getId());
-		if (session == null) {
+		var session = sessionRepository.findFirstByUserIdOrderByExpirationDesc(user.getId());
+
+		var sessionValid = false;
+		if (session != null) {
+			var timeNow = LocalDateTime.now();
+			if (timeNow.isBefore(session.getExpiration())) {
+				sessionValid = true;
+			}
+		}
+
+		if (!sessionValid) {
 			var token = UUID.randomUUID().toString();
 			var expiration = LocalDateTime.now().plusMinutes(sessionLifespan);
 			session = new Session(token, expiration);
-			session.setUserId(user.getId());
-			session = sessionRepository.create(session);
+			session.setUser(user);
+			session = sessionRepository.save(session);
 		}
 
-		var signInInfo = new SignInInfo(session.getToken(), user.getId(), user.getUsername(), user.getRole());
+		var signInInfo = new SignInInfoDTO(session.getToken(), user.getId(), user.getUsername(), user.getRole());
 		return result.setSuccessful(signInInfo);
 	}
 
 	@Override
-	public TaskResult<SignInInfo> validateSession(String token) {
-		var result = new TaskResult<SignInInfo>();
+	public TaskResult<SignInInfoDTO> validateSession(String token) {
+		var result = new TaskResult<SignInInfoDTO>();
+
 		var session = sessionRepository.findByToken(token);
 		if (session == null) {
 			return result.setFailed("Session not found.");
@@ -98,16 +108,16 @@ public class AuthorizationService implements IAuthorizationService {
 			return result.setFailed("Session expired.");
 		}
 
-		var user = userRepository.findById(session.getUserId());
+		var user = session.getUser();
 
 		if (!user.isActive()) {
 			return result.setFailed("User account inactive.");
 		}
 
 		session.setExpiration(timeNow.plusMinutes(sessionLifespan));
-		session = sessionRepository.update(session);
+		session = sessionRepository.save(session);
 
-		var signInInfo = new SignInInfo(session.getToken(), user.getId(), user.getUsername(), user.getRole());
+		var signInInfo = new SignInInfoDTO(session.getToken(), user.getId(), user.getUsername(), user.getRole());
 		return result.setSuccessful(signInInfo);
 	}
 
