@@ -16,6 +16,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -85,6 +86,10 @@ public class Thesis {
 	@JoinColumn(name = "encoder_id")
 	@NotNull
 	private User encoder;
+	
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "tagging_meta_id", nullable = true)
+	private TaggingMeta taggingMeta;
 	
 	public Thesis(long id, boolean active, String bookNumber, String title, String thesisAbstract,
 			LocalDate submissionDate) {
@@ -205,6 +210,14 @@ public class Thesis {
 
 	public void setEncoder(User encoder) {
 		this.encoder = encoder;
+	}
+
+	public TaggingMeta getTaggingMeta() {
+		return taggingMeta;
+	}
+
+	public void setTaggingMeta(TaggingMeta taggingMeta) {
+		this.taggingMeta = taggingMeta;
 	}
 
 }

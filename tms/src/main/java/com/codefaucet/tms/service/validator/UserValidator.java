@@ -4,14 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.codefaucet.tms.model.UserRole;
 import com.codefaucet.tms.model.dto.UserDTO;
 import com.codefaucet.tms.model.service_interface.validator.IValidator;
 import com.codefaucet.tms.repository.IUserRepository;
 
-@Service
+@Component
 public class UserValidator implements IValidator<UserDTO> {
 
 	@Autowired

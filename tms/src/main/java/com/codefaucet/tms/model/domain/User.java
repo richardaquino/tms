@@ -69,6 +69,9 @@ public class User {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "encoder")
 	private List<Thesis> theses;
 
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "encoder")
+	private List<TaggingMeta> taggingMetas;
+	
 	public User(long id, boolean active, UserRole role, String username, String password, String lastName,
 			String firstName, String middleName) {
 		this.id = id;
